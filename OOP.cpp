@@ -1,183 +1,253 @@
+
 #include<iostream>
+#include<string>
 using namespace std;
-class TreeNode
-{
-public:
-    int key;
-    TreeNode* left;
-    TreeNode* right;
-    TreeNode(int value):key(value),left(nullptr),right(nullptr){}
-};
-class MinHeap
+class Person
 {
 private:
-    int* heap;
-    int capacity;
-    int size;
-    void heapify(int index)
-    {
-        int smallest=index;
-        int left=2 * index + 1;
-        int right = 2 * index + 2;
-        if (left < size && heap[left] < heap[smallest])
-        {
-            smallest = left;
-        }
-        if(right < size && heap[right] < heap[smallest])
-        {
-            smallest = right;
-        }
-        if(smallest != index)
-        {
-            swap(heap[index], heap[smallest]);
-            heapify(smallest);
-        }
-    }
+   string name,gender,address,phone;
+   int age;
 public:
-    MinHeap(int cap):capacity(cap),size(0)
+    Person(string n,int a,string g,string ads,string ph):name(n),age(a),gender(g),address(ads),phone(ph){}
+    void setname(string n)
     {
-        heap = new int[capacity];
+        name=n;
     }
-    ~MinHeap()
+    void setage(int a)
     {
-        delete[] heap;
+        age=a;
     }
-    void insert(int key)
+    void setgender(string g)
     {
-        if (size == capacity)
-        {
-            cout<<"Heap overflow"<<endl;
-            return;
-        }
-        int i=size++;
-        heap[i]=key;
-        while (i!=0 && heap[(i-1)/2]>heap[i])
-        {
-            swap(heap[i],heap[(i-1)/2]);
-            i=(i-1)/2;
-        }
+        gender=g;
     }
-    void buildHeap(int* data,int n)
+    void setaddress(string ads)
     {
-        if (n>capacity)
-        {
-            cout<<"Heap capacity exceeded"<<endl;
-            return;
-        }
-        for(int i=0;i<n;++i)
-        {
-            heap[i]=data[i];
-        }
-        size=n;
-        for (int i=size/2-1;i>=0;--i)
-        {
-            heapify(i);
-        }
+        address=ads;
     }
-
-    void displayHeap()
+    void setphone(string ph)
     {
-        for (int i=0;i<size;++i)
-        {
-            cout<<heap[i] << " ";
-        }
-        cout<<endl;
+        phone=ph;
+    }
+    string getname()
+    {
+       return name;
+    }
+    int getage()
+    {
+       return age;
+    }
+    string getgender()
+    {
+       return gender;
+    }
+    string getaddress()
+    {
+       return address;
+    }
+    string getphone()
+    {
+       return phone;
+    }
+    virtual void display()
+    {
+        cout<<" Name: "<<name<<endl;
+        cout<<" Gender: "<<gender<<endl;
+        cout<<" Age: "<<age<<endl;
+        cout<<" Address: "<<address<<endl;
+        cout<<" Phone Number: "<<phone<<endl;
+    }
+    virtual~Person(){}
+};
+class Teacher:public Person
+{
+private:
+    string qualification;
+    double salary;
+public:
+    Teacher(string n,int a,string g,string ads,string ph,string q,double s):Person(n,a,g,ads,ph),qualification(q),salary(s){}
+    void setqualification(string q)
+    {
+       qualification=q;
+    }
+    void setsalary(double s)
+    {
+        salary=s;
+    }
+    string getqualification()
+    {
+       return qualification;
+    }
+    double getsalary()
+    {
+        return salary;
+    }
+    void display()
+    {
+        Person::display();
+        cout<<"Teacher's ";
+        cout<<" Qualification: "<<qualification<<endl;
+        cout<<" Salary: "<<salary<<endl;
     }
 };
-void add(TreeNode*& root, int key)
+class Student:public Person
 {
-    if (root == nullptr)
+private:
+    string education;
+    int obtained_marks,total_marks;
+public:
+    Student(string n,int a,string g,string ads,string ph,string edu,int obtm,int tm):Person(n,a,g,ads,ph),education(edu),obtained_marks(obtm),total_marks(tm){}
+    void seteducation(string edu)
     {
-        root = new TreeNode(key);
-    } else if (key < root->key)
-    {
-        add(root->left, key);
-    } else
-    {
-        add(root->right, key);
+       education=edu;
     }
+    void setobtained_marks(int obtm)
+    {
+      obtained_marks=obtm;
+    }
+    void settotal_marks(int tm)
+    {
+      total_marks=tm;
+    }
+    string geteducation()
+    {
+        return education;
+    }
+    int getobtained_marks()
+    {
+        return obtained_marks;
+    }
+    int gettotal_marks()
+    {
+        return total_marks;
+    }
+    void display()
+    {
+        Person::display();
+        cout<<" Education: "<<education<<endl;
+        cout<<" Obtained Marks: "<<obtained_marks<<endl;
+        cout<<" Total Marks: "<<total_marks<<endl;
+    }
+};
+void strtup()
+{
+    cout<<endl;
+    cout<<"Enter following Data for Teacher: "<<endl;
+    cout<<endl;
 }
-void postOrder(TreeNode* root, int* result, int& index)
+void strtupp()
 {
-    if (root == nullptr)
-    {
-        return;
-    }
-    postOrder(root->left, result, index);
-    postOrder(root->right, result, index);
-    result[index++] = root->key;
+    cout<<endl;
+    cout<<"Enter following Data for Student: "<<endl;
+    cout<<endl;
 }
-void preOrder(TreeNode* root, int* result, int& index)
+void out()
 {
-    if (root == nullptr)
-    {
-        return;
-    }
-    result[index++] = root->key;
-    preOrder(root->left, result, index);
-    preOrder(root->right, result, index);
-}
-TreeNode* populateTree(int* data, int n)
-{
-    TreeNode* root = nullptr;
-    for (int i = 0; i < n; ++i)
-    {
-        add(root, data[i]);
-    }
-    return root;
+    cout<<"Displaying Patient's information: "<<endl;
+    cout<<"--------------------------------"<<endl;
 }
 int main()
 {
-    int n;
-    cout<<"How many nodes you want to insert into BST: ";
-    cin>>n;
-    int* data = new int[n];
-    cout << "Enter "<<n<<" values to insert into BST: ";
-    for(int i=0;i<n;++i)
-    {
-        cin>>data[i];
-    }
+    string t_n,t_g,t_ads,t_ph,t_q,s_n,s_g,s_ads,s_ph,s_e;
+    int t_a,s_a,s_obtm,s_tm;
+    double t_s;
+    char ch,z;
     cout<<endl;
-    cout<<data[0]<<" is inserted as root in BST"<<endl;
-    for(int j=1;j<n;++j)
+    cout<<"Enter Choice: T for Teacher, S for Student: "<<endl;
+    cin>>ch;
+    switch(ch)
     {
-        cout<<data[j]<<" inserted in BST"<<endl;
+    case 'T':
+        {
+       strtup();
+       cout<<"Enter Name: ";
+       cin>>t_n;
+       cout<<endl;
+       cout<<"Enter Gender: ";
+       cin>>t_g;
+       cout<<endl;
+       cout<<"Enter Age: ";
+       cin>>t_a;
+       cout<<endl;
+       cin.ignore();
+       cout<<"Enter Address: ";
+       getline(cin,t_ads);
+       cout<<endl;
+       cout<<"Enter Phone Number: ";
+       cin>>t_ph;
+       cout<<endl;
+       cout<<"Enter Qualification: ";
+       cin>>t_q;
+       cout<<endl;
+       cout<<"Enter Salary: ";
+       cin>>t_s;
+       cout<<endl;
+       Teacher t(t_n,t_a,t_g,t_ads,t_ph,t_q,t_s);
+       cout<<"Do you want to enter more data <Y for Yes, N for No>: ";
+       cin>>z;
+       cout<<endl;
+       if(z=='Y')
+       {
+          out();
+          t.display();
+       }
+       else
+       {
+           cout<<endl;
+           cout<<" Data Saved Successfully!! "<<endl;
+           cout<<endl;
+       }
+       break;
+        }
+    case 'S':
+        {
+       strtupp();
+       cout<<"Enter Name: ";
+       cin>>s_n;
+       cout<<endl;
+       cout<<"Enter Gender: ";
+       cin>>s_g;
+       cout<<endl;
+       cout<<"Enter Age: ";
+       cin>>s_a;
+       cout<<endl;
+       cin.ignore();
+       cout<<"Enter Address: ";
+       getline(cin,s_ads);
+       cout<<endl;
+       cout<<"Enter Phone Number: ";
+       cin>>s_ph;
+       cout<<endl;
+       cout<<"Enter Education: ";
+       cin>>s_e;
+       cout<<endl;
+       cout<<"Enter Obtained Marks: ";
+       cin>>s_obtm;
+       cout<<endl;
+       cout<<"Enter Total Marks: ";
+       cin>>s_tm;
+       cout<<endl;
+       Student s(s_n,s_a,s_g,s_ads,s_ph,s_e,s_obtm,s_tm);
+       cout<<"Do you want to enter more data <Y for Yes, N for No>: ";
+       cin>>z;
+       if(z=='Y')
+       {
+          out();
+          s.display();
+       }
+       else
+       {
+           cout<<endl;
+           cout<<" Data Saved Successfully!! "<<endl;
+           cout<<endl;
+       }
+       break;
+        }
+    default:
+        {
+            cout<<"\t\t\t\t |-- Wrong Input ~ Try Again --|"<<endl;
+            break;
+        }
     }
-    cout<<endl;
-    cout<<endl;
-    TreeNode* bstRoot = populateTree(data, n);
-    int* postOrderResult = new int[n];
-    int postIndex = 0;
-    postOrder(bstRoot, postOrderResult, postIndex);
-    cout << "Post-order Traversal of BST: ";
-    for (int i = 0; i < postIndex; ++i)
-    {
-        cout << postOrderResult[i] << " ";
-    }
-    cout << endl;
-    MinHeap minHeap1(n);
-    for (int i = 0; i < postIndex; ++i)
-    {
-        minHeap1.insert(postOrderResult[i]);
-    }
-    cout << "Min Heap using Insert method: ";
-    minHeap1.displayHeap();
-    cout<<endl;
-    int* preOrderResult = new int[n];
-    int preIndex = 0;
-    preOrder(bstRoot, preOrderResult, preIndex);
-    cout << "Pre-order Traversal of BST: ";
-    for (int i = 0; i < preIndex; ++i)
-    {
-        cout << preOrderResult[i] << " ";
-    }
-    cout << endl;
-    MinHeap minHeap2(n);
-    minHeap2.buildHeap(preOrderResult, preIndex);
-    cout << "Min Heap using Build method: ";
-    minHeap2.displayHeap();
-    delete[] data;
-    delete[] postOrderResult;
-    delete[] preOrderResult;
     return 0;
 }
