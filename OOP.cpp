@@ -1,150 +1,183 @@
 #include<iostream>
 using namespace std;
-class TicTacToe
+class TreeNode
+{
+public:
+    int key;
+    TreeNode* left;
+    TreeNode* right;
+    TreeNode(int value):key(value),left(nullptr),right(nullptr){}
+};
+class MinHeap
 {
 private:
-    char b[3][3];
-    char cp;
+    int* heap;
+    int capacity;
+    int size;
+    void heapify(int index)
+    {
+        int smallest=index;
+        int left=2 * index + 1;
+        int right = 2 * index + 2;
+        if (left < size && heap[left] < heap[smallest])
+        {
+            smallest = left;
+        }
+        if(right < size && heap[right] < heap[smallest])
+        {
+            smallest = right;
+        }
+        if(smallest != index)
+        {
+            swap(heap[index], heap[smallest]);
+            heapify(smallest);
+        }
+    }
 public:
-    TicTacToe():cp('X')
+    MinHeap(int cap):capacity(cap),size(0)
     {
-        for(int i=0;i<3;++i)
+        heap = new int[capacity];
+    }
+    ~MinHeap()
+    {
+        delete[] heap;
+    }
+    void insert(int key)
+    {
+        if (size == capacity)
         {
-          for(int j=0;j<3;++j)
-          {
-           b[i][j]=' ';
-          }
+            cout<<"Heap overflow"<<endl;
+            return;
+        }
+        int i=size++;
+        heap[i]=key;
+        while (i!=0 && heap[(i-1)/2]>heap[i])
+        {
+            swap(heap[i],heap[(i-1)/2]);
+            i=(i-1)/2;
         }
     }
-    void printBoard()
+    void buildHeap(int* data,int n)
     {
+        if (n>capacity)
+        {
+            cout<<"Heap capacity exceeded"<<endl;
+            return;
+        }
+        for(int i=0;i<n;++i)
+        {
+            heap[i]=data[i];
+        }
+        size=n;
+        for (int i=size/2-1;i>=0;--i)
+        {
+            heapify(i);
+        }
+    }
+
+    void displayHeap()
+    {
+        for (int i=0;i<size;++i)
+        {
+            cout<<heap[i] << " ";
+        }
         cout<<endl;
-        cout<<" Current board: "<<endl;
-        cout<<endl;
-        cout<<"    0      1     2"<<endl;
-        for(int i=0;i<3;i++)
-            {
-                cout<<" "<<i<<"   ";
-            for(int j=0;j<3;j++)
-            {
-                cout<<b[i][j];
-                if(j<2)
-                {
-                 cout<<"  |  ";
-                }
-            }
-            cout<<endl;
-            if(i<2)
-            {
-                cout<<"   -----------------"<<endl;
-            }
-        }
-    }
-    bool makeMove(int r,int c)
-    {
-        if(r>=0 && r<3 && c>=0 && c<3 && b[r][c]==' ')
-        {
-            cout<<"        ";
-            b[r][c]=cp;
-            return true;
-        }
-        return false;
-    }
-    bool checkWin()
-    {
-        for(int i=0;i<3;++i)
-        {
-            if(b[i][0]==cp && b[i][1]==cp && b[i][2]==cp)
-            {
-               return true;
-            }
-            if(b[0][i]==cp && b[1][i]==cp && b[2][i]==cp)
-            {
-               return true;
-            }
-        }
-        if(b[0][0]==cp && b[1][1]==cp && b[2][2]==cp)
-            {
-               return true;
-            }
-        if(b[0][2]==cp && b[1][1]==cp && b[2][0]==cp)
-            {
-               return true;
-            }
-        return false;
-    }
-    bool checkDraw()
-    {
-        for(int i=0;i<3;++i)
-            {
-            for(int j=0;j<3;++j)
-            {
-                if(b[i][j]==' ')
-                {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-    void switchPlayer()
-    {
-        cp=(cp=='X')?'O':'X';
-    }
-    bool validMove(bool gameWon,bool gameDraw)
-    {
-       if(!gameWon && !gameDraw)
-        {
-           switchPlayer();
-        }
-    }
-    bool gameStatus(bool gameWon,bool gameDraw)
-    {
-      if(gameWon)
-        {
-            cout<<endl;
-            cout<<"\t\t |-- Player "<<cp<<" wins! --|"<<endl;
-            cout<<endl;
-        }
-        else if(gameDraw)
-        {
-            cout<<endl;
-            cout<<"\t\t |-- The game is a draw. --|"<<endl;
-            cout<<endl;
-        }
-    }
-    void play()
-    {
-        int r,c;
-        bool gameWon =false,gameDraw=false;
-        cout<<endl;
-        cout<<"\t\t\t\t |-- Tic-Tac-Toe --| "<<endl;
-        cout<<endl;
-        cout<<" Welcome to Tic-Tac-Toe! "<<endl;
-        while(!gameWon && !gameDraw)
-        {
-            printBoard();
-            cout<<endl;
-            cout<<" |-- Player "<<cp<<" --|"<<endl;
-            cout<<endl;
-            cout<<" Enter your move (row and column): ";
-            cin>>r>>c;
-            system("cls");
-            if(makeMove(r,c))
-            {
-                gameWon=checkWin();
-                gameDraw=checkDraw();
-                validMove(gameWon,gameDraw);
-            }
-        }
-        printBoard();
-        gameStatus(gameWon,gameDraw);
     }
 };
+void add(TreeNode*& root, int key)
+{
+    if (root == nullptr)
+    {
+        root = new TreeNode(key);
+    } else if (key < root->key)
+    {
+        add(root->left, key);
+    } else
+    {
+        add(root->right, key);
+    }
+}
+void postOrder(TreeNode* root, int* result, int& index)
+{
+    if (root == nullptr)
+    {
+        return;
+    }
+    postOrder(root->left, result, index);
+    postOrder(root->right, result, index);
+    result[index++] = root->key;
+}
+void preOrder(TreeNode* root, int* result, int& index)
+{
+    if (root == nullptr)
+    {
+        return;
+    }
+    result[index++] = root->key;
+    preOrder(root->left, result, index);
+    preOrder(root->right, result, index);
+}
+TreeNode* populateTree(int* data, int n)
+{
+    TreeNode* root = nullptr;
+    for (int i = 0; i < n; ++i)
+    {
+        add(root, data[i]);
+    }
+    return root;
+}
 int main()
 {
-    TicTacToe game;
-    game.play();
+    int n;
+    cout<<"How many nodes you want to insert into BST: ";
+    cin>>n;
+    int* data = new int[n];
+    cout << "Enter "<<n<<" values to insert into BST: ";
+    for(int i=0;i<n;++i)
+    {
+        cin>>data[i];
+    }
+    cout<<endl;
+    cout<<data[0]<<" is inserted as root in BST"<<endl;
+    for(int j=1;j<n;++j)
+    {
+        cout<<data[j]<<" inserted in BST"<<endl;
+    }
+    cout<<endl;
+    cout<<endl;
+    TreeNode* bstRoot = populateTree(data, n);
+    int* postOrderResult = new int[n];
+    int postIndex = 0;
+    postOrder(bstRoot, postOrderResult, postIndex);
+    cout << "Post-order Traversal of BST: ";
+    for (int i = 0; i < postIndex; ++i)
+    {
+        cout << postOrderResult[i] << " ";
+    }
+    cout << endl;
+    MinHeap minHeap1(n);
+    for (int i = 0; i < postIndex; ++i)
+    {
+        minHeap1.insert(postOrderResult[i]);
+    }
+    cout << "Min Heap using Insert method: ";
+    minHeap1.displayHeap();
+    cout<<endl;
+    int* preOrderResult = new int[n];
+    int preIndex = 0;
+    preOrder(bstRoot, preOrderResult, preIndex);
+    cout << "Pre-order Traversal of BST: ";
+    for (int i = 0; i < preIndex; ++i)
+    {
+        cout << preOrderResult[i] << " ";
+    }
+    cout << endl;
+    MinHeap minHeap2(n);
+    minHeap2.buildHeap(preOrderResult, preIndex);
+    cout << "Min Heap using Build method: ";
+    minHeap2.displayHeap();
+    delete[] data;
+    delete[] postOrderResult;
+    delete[] preOrderResult;
     return 0;
 }
-
